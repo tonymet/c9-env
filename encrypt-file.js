@@ -5,15 +5,15 @@ var openpgp = require('openpgp')
 var writeStream = fs.createWriteStream('tmp/outfile.bin')
 
 
-tar.c({
+var tarPromise = tar.create({
         gzip: false,
-        file: 'tmp/infile.tar'
+        //file: 'tmp/infile.tar'
     }, ['tmp/testtar'])
-    .then(console.log)
-    .then(() => {
+    
+    console.log(tarPromise)
         
         const options = {
-            message: openpgp.message.fromBinary( fs.createReadStream('tmp/infile.tar')), // input as Message object
+            message: openpgp.message.fromBinary(tarPromise), // input as Message object
             passwords: ['secret stuff'], // multiple passwords possible
             armor: false // don't ASCII armor (for Uint8Array output)
         };
@@ -43,5 +43,3 @@ tar.c({
             }
             console.log("writing a block", ciphertext.message.packets.length)
         });
-
-    });
