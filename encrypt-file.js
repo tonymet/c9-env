@@ -26,18 +26,6 @@ var tarStream = tar.create({
             armor: false // don't ASCII armor (for Uint8Array output)
         };
 
-        openpgp.encrypt(options).then(async function(ciphertext) {
-            const encrypted = ciphertext.message.packets.write(); // get raw encrypted packets as ReadableStream<Uint8Array>
-            debug(encrypted)
-            const reader = openpgp.stream.getReader(encrypted);
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                writeStream.write(value)
-            }
-            debug("writing a block", ciphertext.message.packets.length)
-        });
-
        
 
         openpgp.encrypt(options).then(async function(ciphertext) {
