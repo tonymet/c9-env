@@ -19,7 +19,9 @@ async function pipe(reader, writer){
     
 var encryptedTarStream = tar.extract({
         gzip: false,
-        cwd: 'tmp/'
+        cwd: 'tmp/',
+        strict: true, 
+        onentry: debug
         //file: 'tmp/infile.tar'
     })
     debug('encryptedTarStream', encryptedTarStream)
@@ -33,7 +35,9 @@ var encryptedTarStream = tar.extract({
        
 
         openpgp.decrypt(options).then(async function(plaintext) {
-            encryptedTarStream.write(plaintext.data)
+            debug(plaintext.data)
+            //openpgp.stream.readToEnd(plaintext.data).then(debug)
+            encryptedTarStream.write(await openpgp.stream.readToEnd(plaintext.data))
             debug('written')
         });
     
